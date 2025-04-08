@@ -1,0 +1,32 @@
+name: Stop First.py
+
+# Manuel tetikleme için
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Neden durduruluyor?'
+        required: false
+        default: 'Manuel durdurma'
+
+jobs:
+  send-stop-command:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Send Pushbullet Notification
+        run: |
+          curl -X POST \
+            --header 'Access-Token: o.iQY92r3y9rNlstjrxnEuvQYj2DEFmSXU' \
+            --header 'Content-Type: application/json' \
+            --data-binary '{
+              "type": "note",
+              "title": "first-py-stop",
+              "body": "Stop komutu GitHub Actions üzerinden gönderildi - F10 tuşu tetiklenecek"
+            }' \
+            https://api.pushbullet.com/v2/pushes
+            
+      - name: Report Status
+        run: echo "First.py durdurma komutu gönderildi. ${{ github.event.inputs.reason }}"
