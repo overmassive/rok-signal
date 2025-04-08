@@ -1,0 +1,32 @@
+name: Start First.py
+
+# Manuel tetikleme için
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Neden başlatılıyor?'
+        required: false
+        default: 'Manuel başlatma'
+
+jobs:
+  send-start-command:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: Send Pushbullet Notification
+        run: |
+          curl -X POST \
+            --header 'Access-Token: o.iQY92r3y9rNlstjrxnEuvQYj2DEFmSXU' \
+            --header 'Content-Type: application/json' \
+            --data-binary '{
+              "type": "note",
+              "title": "first-py-start",
+              "body": "Start komutu GitHub Actions üzerinden gönderildi - First.py başlatılacak"
+            }' \
+            https://api.pushbullet.com/v2/pushes
+            
+      - name: Report Status
+        run: echo "First.py başlatma komutu gönderildi. ${{ github.event.inputs.reason }}"
